@@ -29,7 +29,149 @@ public class NavCheckIn
 	
 	 public void confirmButton(ActionEvent e) throws IOException
 	 {
-		 System.out.println("Patient Checked-in");
+		 String filename = usernameField.getText().toLowerCase() + "_PatientInfo.txt";
+		 
+		 String username = "";
+		 String firstName = "";
+		 String lastName = "";
+		 String DOB = "";
+		 String email = "";
+		 String phoneNumber = "";
+		 String password = "";
+		 
+		 if(doesFileExist(filename))
+		 {
+			 try
+			 {
+				 File patientFile = new File(filename);
+				 BufferedReader br = new BufferedReader(new FileReader(patientFile));
+				 String line;
+				 while((line = br.readLine()) != null)
+				 {
+					 String[] parts = line.split(":");
+					 if(parts.length >= 2)
+					 {
+						 String key = parts[0].trim();
+						 String value = parts[1].trim();
+						 
+						 switch (key)
+						 {
+						 case "Username":
+							 username = value;
+							 break;
+						 case "First Name":
+							 firstName = value;
+							 break;
+						 case "Last Name":
+							 lastName = value;
+							 break;
+						 case "DOB":
+							 DOB = value;
+							 break;
+						 case "Email":
+							 email = value;
+							 break;
+						 case "Phone Number":
+							 phoneNumber = value;
+							 break;
+						 case "Password":
+							 password = value;
+							 break; 
+						 }
+					 }
+				 }
+				 
+			 }
+			 catch (IOException ee)
+			 {
+				 ee.printStackTrace();
+			 }
+			 
+			 patient Pat = new patient(username, firstName, lastName, DOB, email, phoneNumber, password); 
+			 
+			 //PatientList.addPatient(Pat);
+			 
+			 String checkedInPatientsFile = "checked_in_patients.txt";
+			 Files.write(Paths.get(checkedInPatientsFile), (username + "\n").getBytes(), StandardOpenOption.APPEND);
+			 System.out.println("Patient Checked-in");
+		 }
+		 /*else if (true)
+		 {
+			 firstName = firstNameField.getText().toLowerCase();
+			 lastName = lastNameField.getText().toLowerCase();
+			 
+			 String firstNameTemp = "";
+			 
+			 int i = 0;
+			 while(i < 100)
+			 {
+				 username = firstName.substring(0,1) + lastName + i;
+				 filename = username + "_PatientInfo.txt";
+				 if(doesFileExist(filename))
+				 {
+					 try
+					 {
+						 File patientFile = new File(filename);
+						 BufferedReader br = new BufferedReader(new FileReader(patientFile));
+						 String line;
+						 while((line = br.readLine()) != null)
+						 {
+							 String[] parts = line.split(":");
+							 if(parts.length >= 2)
+							 {
+								 String key = parts[0].trim();
+								 String value = parts[1].trim();
+								 
+								 switch (key)
+								 {
+								 case "Username":
+									 username = value;
+									 break;
+								 case "First Name":
+									 firstNameTemp = value;
+									 break;
+								 case "Last Name":
+									 lastName = value;
+									 break;
+								 case "DOB":
+									 DOB = value;
+									 break;
+								 case "Email":
+									 email = value;
+									 break;
+								 case "Phone Number":
+									 phoneNumber = value;
+									 break;
+								 case "Password":
+									 password = value;
+									 break; 
+								 }
+							 }
+						 }
+						 
+					 }
+					 catch (IOException ee)
+					 {
+						 ee.printStackTrace();
+					 }
+					 
+					 if(firstNameTemp.equals(firstName))
+					 {
+						 patient Pat = new patient(username, firstName, lastName, DOB, email, phoneNumber, password);
+						 i = 100;
+					 }
+				 }
+				 else if(i == 99)
+				 {
+					 System.out.println("Patient does not exist");
+				 }
+				 
+			 }
+		 }*/
+		 else
+		 {
+			 System.out.println("Error in checking in patient");
+		 }
 	 }
 	 
 	 public void backButton(ActionEvent e) throws IOException
@@ -43,4 +185,9 @@ public class NavCheckIn
 			stage.setScene(scene);
 			stage.show();
 	 }
+
+	private boolean doesFileExist(String filename)
+	{
+		return Files.exists(Paths.get(filename));
+	}
 }
