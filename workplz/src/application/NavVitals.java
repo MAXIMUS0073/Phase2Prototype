@@ -50,11 +50,24 @@ public class NavVitals implements Initializable
 	@FXML
 	private ChoiceBox<String> patientName; 
 
-	private String[] options = {"John Doe", "Jane Doe"};		//Patient Names
+	private String[] options = {};		//Patient Names
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) 
 	{
+		// Path to the checked-in patients file
+	    String checkedInPatientsFile = "checked_in_patients.txt";
+
+	    try (BufferedReader reader = new BufferedReader(new FileReader(checkedInPatientsFile))) {
+	        String line;
+	        while ((line = reader.readLine()) != null) {
+	            // Add each line (username) to the ChoiceBox
+	            patientName.getItems().add(line);
+	        }
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+		
 		// TODO Auto-generated method stub
 		patientName.getItems().addAll(options);
 	}
