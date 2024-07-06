@@ -30,11 +30,32 @@ public class NavPatientLogin
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        if ("admin".equals(username) && "password".equals(password)) 
+        String filename = username + "_PatientInfo.txt";
+        if(doesFileExist(filename))
         {
-            System.out.println("User successfully logged in");
+            String actualPassword = "";
             
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("patientPortal.fxml"));
+		try (BufferedReader reader = new BufferedReader(new FileReader(filename)))
+        	{
+        		String line;
+        		while((line = reader.readLine()) != null)
+        		{
+        			if (line.startsWith("Password: "))
+        			{
+        				actualPassword = line.substring("Password: ".length());
+        				break;
+        			}
+        		}
+        	}
+        	catch(IOException ee)
+        	{
+        		ee.printStackTrace();
+        	}
+        	
+        	if(actualPassword.equals(password))
+        	{
+			System.out.println("User successfully logged in");
+            		FXMLLoader loader = new FXMLLoader(getClass().getResource("patientPortal.fxml"));
 			Parent root = loader.load();
 			NavPatient NavPatient = loader.getController();
 			
@@ -42,11 +63,15 @@ public class NavPatientLogin
 			scene = new Scene(root);
 			stage.setScene(scene);
 			stage.show();
+		}
+		else 
+            	{
+               	 	System.out.println("Login failed");
+            	}
         } 
         else 
         {
             System.out.println("Login failed");
-            // Add your code for failed login here
         }
     }
    
@@ -61,4 +86,10 @@ public class NavPatientLogin
 		stage.setScene(scene);
 		stage.show();
    }
+
+
+private boolean doesFileExist(String filename)
+	{
+		return Files.exists(Paths.get(filename));
+	}
 }
